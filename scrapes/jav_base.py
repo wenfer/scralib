@@ -3,7 +3,7 @@ import os
 import re
 from typing import Optional
 
-from _scrape import MovieInfo, MovieScrape
+from _scrape import MovieInfo, MovieScrape, default_dir
 
 
 class BaseJavScrape(MovieScrape):
@@ -44,7 +44,7 @@ class BaseJavScrape(MovieScrape):
     def _scrape_by_num(self, num) -> Optional[MovieInfo]:
         pass
 
-    def _scrape_data(self, name, parent_dir) -> Optional[str]:
+    def _scrape_data(self, name) -> Optional[str]:
         movie = self._scrape_by_num(name)
         if movie is None:
             return None
@@ -54,7 +54,7 @@ class BaseJavScrape(MovieScrape):
                 movie.title = res
         if movie.actor is None or movie.actor == "":
             movie.actor = "未知演员"
-        base_dir = os.path.join(self.__target_dir if self.__target_dir else parent_dir, movie.actor, movie.title)
+        base_dir = os.path.join(self.__target_dir if self.__target_dir else default_dir(), movie.actor, movie.title)
         os.makedirs(base_dir, exist_ok=True)
         self.save_img(movie, base_dir)
         return base_dir

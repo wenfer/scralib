@@ -1,3 +1,4 @@
+import json
 import re
 from typing import Union
 
@@ -89,9 +90,11 @@ class Jav321Scrape(BaseJavScrape):
             movie.preview_pics = preview_pics[1:]
         return movie
 
+    def test(self, num):
+        return self._scrape_by_num(num)
+
 
 if __name__ == '__main__':
-    config = AppConfig()
-    spider = Jav321Scrape(config)
-    m = spider.scrape_data("SONE-313")
-    print(m)
+    spider = Jav321Scrape("")
+    m = spider.test("SONE-313")
+    print(json.dumps(m.to_dict(),ensure_ascii=False))

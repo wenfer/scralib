@@ -90,7 +90,7 @@ class Scrape:
     def match_name(self, file_name):
         pass
 
-    def _scrape_data(self, name, parent_dir) -> Optional[str]:
+    def _scrape_data(self, name) -> Optional[str]:
         """
         :param name: 正则匹配后的番号
         :return: 刮削成功的元信息所在目录
@@ -101,7 +101,7 @@ class Scrape:
         matched_name = self.match_name(file_path.name)
         if matched_name is not None and matched_name != "":
             try:
-                new_dir = self._scrape_data(matched_name, file_path.parent)
+                new_dir = self._scrape_data(matched_name)
                 if new_dir:
                     shutil.move(file_path, new_dir)
                     return new_dir
@@ -249,11 +249,6 @@ class MovieScrape(Scrape):
         # tree.write(output_path, encoding="utf-8", xml_declaration=True)
         #
         # print(f"NFO文件已生成：{output_path}")
-
-    # num 番号
-
-    def scrape_data(self, file_name) -> Optional[MovieInfo]:
-        pass
 
     def save_img(self, movie: MovieInfo, save_dir):
         pass
