@@ -1,0 +1,40 @@
+DEFAULT_DIR_NAME = '整理完成'
+FAIL_DIR = '整理失败'
+SCAN_DIR = ""
+
+MOVIE_TARGET_DIR = ""
+
+USE_PROXY = None
+HTTP_PROXY = ""
+HTTPS_PROXY = ""
+
+# 音乐刮削目录
+MUSIC_TARGET_DIR = ""
+
+IGNORE_NAMES = []
+SCRAPE_LIST = []
+
+MOVIE_MINSIZE = 10
+MUSIC_MINSIZE = 1
+
+# 请求超时时间，默认30
+TIMEOUT = 30
+
+# 翻译引擎
+TRANSLATE_ENGINE = None
+
+# bing翻译
+BING_APP_ID = None
+BING_API_KEY = None
+
+# 大模型翻译
+OPENAI_API_URL = None
+OPENAI_API_KEY = None
+OPENAI_MODEL = None
+
+# claude 翻译
+CLAUDE_API_KEY = None
+
+# 百度翻译
+BAIDU_APP_ID = None
+BAIDU_API_KEY = None
