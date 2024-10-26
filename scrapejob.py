@@ -33,7 +33,8 @@ def handle_file(file_path: Path):
                 any(file_path.name.endswith(suffix) for suffix in scrape.support_suffix())):
             logging.info(f"开始使用{scrape.site_url()}刮削")
             try:
-                scrape.scrape(file_path)
+                if scrape.scrape(file_path):
+                    break
             except:
                 logging.error(f"请求 {scrape.site_url()} 失败，可以尝试配置代理")
 
