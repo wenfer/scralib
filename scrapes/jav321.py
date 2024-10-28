@@ -32,6 +32,8 @@ class Jav321Scrape(BaseJavScrape):
             movie.producer = company_tags[0]
         # actress, actress_pics
         # jav321现在连女优信息都没有了，首页通过女优栏跳转过去也全是空白
+        # actress, actress_pics
+        # jav321现在连女优信息都没有了，首页通过女优栏跳转过去也全是空白
         actress, actress_pics = [], {}
         actress_tags = html.xpath("//div[@class='thumbnail']/a[contains(@href,'/star/')]/img")
         for tag in actress_tags:
@@ -97,4 +99,4 @@ class Jav321Scrape(BaseJavScrape):
 if __name__ == '__main__':
     spider = Jav321Scrape("")
     m = spider.test("SONE-313")
-    print(json.dumps(m.to_dict(),ensure_ascii=False))
+    print(json.dumps(m.to_dict(), ensure_ascii=False))

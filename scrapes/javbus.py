@@ -25,7 +25,6 @@ class JavBusScrape(BaseJavScrape):
             raise RuntimeError("movie not found")
 
         container = html.xpath("//div[@class='container']")[0]
-        logging.info(f"container  is   {str(container)}")
         title = container.xpath("h3/text()")[0]
         cover = container.xpath("//a[@class='bigImage']/img/@src")[0]
         preview_pics = container.xpath("//div[@id='sample-waterfall']/a/@href")
@@ -72,17 +71,16 @@ class JavBusScrape(BaseJavScrape):
             if not pic_url.endswith('nowprinting.gif'):  # 略过默认的头像
                 actress_pics[name] = pic_url
         # 整理数据并更新movie的相应属性
-        movie.url = f'{self.base_url}/{num}'
+        movie.url = f'{permanent_url}/{movie.dvdid}'
         movie.dvdid = dvdid
         movie.title = title.replace(dvdid, '').strip()
         movie.cover = cover
         movie.preview_pics = preview_pics
         if publish_date != '0000-00-00':  # 丢弃无效的发布日期
             movie.publish_date = publish_date
-        movie.runtime = duration if int(duration) else None
+        movie.duration = duration if int(duration) else None
         movie.genre = genre
         movie.genre_id = genre_id
         movie.actress = actress
-        movie.actor = ",".join(actress)
         movie.actress_pics = actress_pics
         return movie

@@ -9,8 +9,8 @@ from _scrape import MovieInfo, MovieScrape, default_dir
 class BaseJavScrape(MovieScrape):
     __name_regex = ["[a-z|A-Z]{3,4}-[0-9]{3,4}"]
 
-    def __init__(self, target_dir, timeout, create_nfo, translator):
-        super().__init__(timeout=timeout, create_nfo=create_nfo)
+    def __init__(self, target_dir, timeout, create_nfo, translator, headers=None):
+        super().__init__(timeout=timeout, headers=headers, create_nfo=create_nfo)
         self.__target_dir = target_dir
         self.__translator = translator
 
@@ -22,7 +22,7 @@ class BaseJavScrape(MovieScrape):
         return None
 
     def save_img(self, movie: MovieInfo, save_dir):
-        logging.info(f"cover  :{movie.cover}    {len(movie.cover)}")
+        logging.info(f"开始下载影片:{movie.title} 的相关图片")
         if len(movie.cover) > 0:
             self.download_img(movie.cover, save_dir, "cover.jpg", movie.url)
         if len(movie.preview_pics) > 0:
@@ -30,7 +30,6 @@ class BaseJavScrape(MovieScrape):
             for preview_pic in movie.preview_pics:
                 self.download_img(preview_pic, save_dir, f"preview_{name_count}.jpg", movie.url)
                 name_count += 1
-        logging.info(f"{len(movie.actress_pics)}")
         if len(movie.actress_pics) > 0:
             for actor in movie.actress_pics:
                 self.download_img(movie.actress_pics[actor], save_dir, f"{actor}.jpg", movie.url)

@@ -6,6 +6,12 @@ from pathlib import Path
 
 import config
 import translate
+from scrapes.airav import AiravScrape
+from scrapes.arzon import ArzonScrape
+from scrapes.avsox import AvsoxScrape
+from scrapes.avwiki import AvwikiScrape
+from scrapes.dl_getchu import DlGetchuScrape
+from scrapes.fanza import FanzaScrape
 from scrapes.jav321 import Jav321Scrape
 from scrapes.javbus import JavBusScrape
 from scrapes.mp3_scrape import Mp3Scrape
@@ -27,14 +33,13 @@ def match_ignores(string, patterns):
 
 def handle_file(file_path: Path):
     for scrape in scrapes:
-        logging.info(
-            f"开始处理文件{file_path.name}  {file_path.stat().st_size}   {scrape.min_size()}   {scrape.site_url()}")
         if (file_path.stat().st_size > scrape.min_size() and
                 any(file_path.name.endswith(suffix) for suffix in scrape.support_suffix())):
-            logging.info(f"开始使用{scrape.site_url()}刮削")
+            logging.info(f"开始使用{scrape.site_url()}刮削文件:{file_path.name}")
             try:
-                if scrape.scrape(file_path):
-                    break
+                new_path = scrape.scrape(file_path)
+                if new_path:
+                    logging.info(f"{file_path.name}刮削成功，文件已经移动到{new_path}")
             except:
                 logging.error(f"请求 {scrape.site_url()} 失败，可以尝试配置代理")
 
@@ -104,6 +109,18 @@ if __name__ == '__main__':
             scrapes.append(JavBusScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
         elif scrape_name == "jav321":
             scrapes.append(Jav321Scrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "airav":
+            scrapes.append(AiravScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "arzon":
+            scrapes.append(ArzonScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "avsox":
+            scrapes.append(AvsoxScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "avwiki":
+            scrapes.append(AvwikiScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "dl_getchu":
+            scrapes.append(DlGetchuScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+        elif scrape_name == "fanza":
+            scrapes.append(FanzaScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
     for file in os.scandir(config.SCAN_DIR):
         if file.is_file():
             handle_file(Path(file.path))
