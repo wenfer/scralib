@@ -1,4 +1,5 @@
 """从avsox抓取数据"""
+import json
 import logging
 from typing import Optional
 
@@ -21,7 +22,7 @@ class AvsoxScrape(BaseJavScrape):
         # avsox无法直接跳转到影片的网页，因此先搜索再从搜索结果中寻找目标网页
         if num.startswith('FC2-'):
             full_id = num.replace('FC2-', 'FC2-PPV-')
-        html = self.get_html(f'{self.base_url}tw/search/{num}')
+        html = self.get_html(f'{self.base_url}/tw/search/{num}')
         ids = html.xpath("//div[@class='photo-info']/span/date[1]/text()")
         urls = html.xpath("//a[contains(@class, 'movie-box')]/@href")
         ids_lower = list(map(str.lower, ids))
@@ -65,3 +66,12 @@ class AvsoxScrape(BaseJavScrape):
             movie.producer = producer
             movie.serial = serial
         return movie
+
+    def test(self, num):
+        return self._scrape_by_num(num)
+
+
+if __name__ == '__main__':
+    spider = AvsoxScrape("")
+    m = spider.test("082713-417")
+    print(json.dumps(m.get_info_dic(), ensure_ascii=False))

@@ -1,4 +1,5 @@
 """从arzon抓取数据"""
+import json
 import re
 from typing import Optional
 
@@ -86,3 +87,12 @@ class ArzonScrape(BaseJavScrape):
         movie.cover = f'https:{cover}'
         movie.preview_pics = preview_pics
         return movie
+
+    def test(self, num):
+        return self._scrape_by_num(num)
+
+
+if __name__ == '__main__':
+    spider = ArzonScrape("")
+    m = spider.test("csct-011")
+    print(json.dumps(m.get_info_dic(), ensure_ascii=False))

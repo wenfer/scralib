@@ -71,22 +71,9 @@ class NfoMovie:
 
 
 class MovieInfo:
-    def __init__(self, dvdid: str = None, /, *, cid: str = None, from_file=None):
-        """
-        Args:
-            dvdid ([str], optional): 番号，要通过其他方式创建实例时此参数应留空
-            from_file: 从指定的文件(json格式)中加载数据来创建实例
-        """
-        arg_count = len([i for i in [dvdid, cid, from_file] if i])
-        if arg_count != 1:
-            raise TypeError(f'Require 1 parameter but {arg_count} given')
-        if isinstance(dvdid, Movie):
-            self.dvdid = dvdid.dvdid
-            self.cid = dvdid.cid
-        else:
-            self.dvdid = dvdid  # DVD ID，即通常的番号
-            self.cid = cid  # DMM Content ID
+    def __init__(self, dvdid: str = None):
         # 创建类的默认属性
+        self.dvdid = dvdid
         self.url = None  # 影片页面的URL
         self.plot = None  # 故事情节
         self.cover = None  # 封面图片（URL）
@@ -107,25 +94,13 @@ class MovieInfo:
         self.publisher = None  # 发行商
         self.uncensored = None  # 是否为无码影片
         self.publish_date = None  # 发布日期
+        self.cid = None
         self.preview_pics = None  # 预览图片（URL）
         self.preview_video = None  # 预览视频（URL）
-
-        if from_file:
-            if os.path.isfile(from_file):
-                self.load(from_file)
-            else:
-                raise TypeError(f"Invalid file path: '{from_file}'")
 
     def __str__(self) -> str:
         d = vars(self)
         return json.dumps(d, indent=2, ensure_ascii=False)
-
-    def __repr__(self) -> str:
-        if self.dvdid:
-            expression = f"('{self.dvdid}')"
-        else:
-            expression = f"('cid={self.cid}')"
-        return __class__.__name__ + expression
 
     def __eq__(self, other) -> bool:
         if isinstance(other, self.__class__):
@@ -133,32 +108,12 @@ class MovieInfo:
         else:
             return False
 
-    def dump(self, filepath=None, crawler=None) -> None:
-        if not filepath:
-            id = self.dvdid if self.dvdid else self.cid
-            if crawler:
-                filepath = f'../unittest/data/{id} ({crawler}).json'
-                filepath = os.path.join(os.path.dirname(__file__), filepath)
-            else:
-                filepath = id + '.json'
-        with open(filepath, 'wt', encoding='utf-8') as f:
-            f.write(str(self))
-
-    def load(self, filepath) -> None:
-        with open(filepath, 'rt', encoding='utf-8') as f:
-            d = json.load(f)
-        # 更新对象属性
-        attrs = vars(self).keys()
-        for k, v in d.items():
-            if k in attrs:
-                self.__setattr__(k, v)
-
     def get_info_dic(self):
         """生成用来填充模板的字典"""
         return {
             'title': self.title,
             'dvdid': self.dvdid,
-            'cid': self.cid,
+            'cid': self.cid if self.cid else self.dvdid,
             'url': self.url,
             'plot': self.plot,
             'cover': self.cover,

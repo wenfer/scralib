@@ -6,6 +6,8 @@ import json
 import logging
 from typing import Dict, List, Tuple, Optional
 
+import lxml
+
 from _scrape import MovieInfo
 from scrapes.jav_base import BaseJavScrape
 
@@ -131,6 +133,7 @@ class FanzaScrape(BaseJavScrape):
         """解析指定番号的影片数据"""
         default_url = f'{self.base_url}/digital/videoa/-/detail/=/cid={cid}/'
         r0 = self.get(default_url, delay_raise=True)
+        movie = MovieInfo()
         if r0.status_code == 404:
             urls = self.get_urls_of_cid(cid)
             for d in urls:
@@ -153,8 +156,12 @@ class FanzaScrape(BaseJavScrape):
                         raise
         else:
             html = resp2html_wrapper(r0)
+
             self.parse_videoa_page(movie, html)
             movie.url = default_url
+
+    def test(self, num) -> MovieInfo:
+        return self.__scrape_by_cid(num)
 
 
 _PRODUCT_PRIORITY = {'digital': 10, 'mono': 5, 'monthly': 2, 'rental': 1}
@@ -169,7 +176,8 @@ def sort_search_result(result: List[Dict]):
 
 
 def resp2html_wrapper(resp):
-    html = resp.text
+    text = resp.text
+    html = lxml.html.fromstring(resp.text)
     if 'not available in your region' in html.text_content():
         raise RuntimeError('FANZA不允许从当前IP所在地区访问，请检查你的网络和代理服务器设置')
     elif '/login/' in resp.url:
@@ -216,20 +224,11 @@ def parse_anime_page(movie: MovieInfo, html):
     movie.uncensored = False  # 服务器在日本且面向日本国内公开发售，不会包含无码片
 
 
-# parse_dvd_page = parse_videoa_page    # 118wtktabf067
-parse_ppr_page = parse_videoa_page
-parse_nikkatsu_page = parse_videoa_page
-parse_doujin_page = parse_anime_page
 
-if __name__ == "__main__":
-    import pretty_errors
+#d_aisoft3356
 
-    pretty_errors.configure(display_link=True)
-    logger.root.handlers[1].level = logging.DEBUG
 
-    movie = MovieInfo(cid='d_aisoft3356')
-    try:
-        parse_data(movie)
-        print(movie)
-    except CrawlerError as e:
-        logger.error(e, exc_info=1)
+if __name__ == '__main__':
+    spider = FanzaScrape("")
+    m = spider.test("d_aisoft3356")
+    print(json.dumps(m.get_info_dic(), ensure_ascii=False))

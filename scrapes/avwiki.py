@@ -1,4 +1,5 @@
 """从av-wiki抓取数据"""
+import json
 import logging
 from typing import Optional
 
@@ -65,3 +66,12 @@ class AvwikiScrape(BaseJavScrape):
         movie.title = title
         movie.uncensored = False  # 服务器在日本且面向日本国内公开发售，不会包含无码片
         return movie
+
+    def test(self, num):
+        return self._scrape_by_num(num)
+
+
+if __name__ == '__main__':
+    spider = AvwikiScrape("")
+    m = spider.test("259LUXU-593")
+    print(json.dumps(m.get_info_dic(), ensure_ascii=False))

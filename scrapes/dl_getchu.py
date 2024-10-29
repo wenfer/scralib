@@ -1,4 +1,5 @@
 """从dl.getchu官网抓取数据"""
+import json
 import re
 import logging
 from typing import Optional
@@ -115,3 +116,14 @@ class DlGetchuScrape(BaseJavScrape):
         movie.dvdid = id_uc
         movie.url = url
         return movie
+
+
+
+    def test(self, num):
+        return self._scrape_by_num(num)
+
+
+if __name__ == '__main__':
+    spider = DlGetchuScrape("")
+    m = spider.test("getchu-4041026")
+    print(json.dumps(m.get_info_dic(), ensure_ascii=False))
