@@ -67,7 +67,7 @@ class DlGetchuScrape(BaseJavScrape):
         getchu_id = id_uc.replace('GETCHU-', '')
         # 抓取网页
         url = f'{self.base_url}/i/item{getchu_id}'
-        html = self.get_html(url, delay_raise=True,encoding=base_encode)
+        html = self.get_html(url, delay_raise=True, encoding=base_encode)
         container = html.xpath("//form[@action='https://dl.getchu.com/cart/']/div/table[3]")
         if len(container) > 0:
             container = container[0]
@@ -116,8 +116,6 @@ class DlGetchuScrape(BaseJavScrape):
         movie.dvdid = id_uc
         movie.url = url
         return movie
-
-
 
     def test(self, num):
         return self._scrape_by_num(num)

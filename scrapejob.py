@@ -53,7 +53,6 @@ def scan_dir(directory_path):
         return
     logging.info(f"开始扫描目录{directory_path.name}")
     for child in os.scandir(directory_path):
-        logging.info(f"扫描到:{child.name}")
         if match_ignores(child.name, config.IGNORE_NAMES):
             logging.info(f"ignore:{child.name}")
             continue
