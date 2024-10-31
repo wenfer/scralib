@@ -40,6 +40,7 @@ def handle_file(file_path: Path):
                 new_path = scrape.scrape(file_path)
                 if new_path:
                     logging.info(f"{file_path.name}刮削成功，文件已经移动到{new_path}")
+                    break
             except BaseException as e:
                 logging.error(f"请求 {scrape.site_url()} 失败，可以尝试配置代理")
                 logging.exception(e)
