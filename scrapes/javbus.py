@@ -1,8 +1,10 @@
 import logging
-from typing import  Union
+from typing import Union
 
 from _scrape import MovieInfo
 from scrapes.jav_base import BaseJavScrape
+
+permanent_url = 'https://www.javbus.com'
 
 
 class JavBusScrape(BaseJavScrape):
