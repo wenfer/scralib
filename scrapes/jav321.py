@@ -82,6 +82,7 @@ class Jav321Scrape(BaseJavScrape):
         movie.dvdid = dvdid
         movie.title = title
         movie.actress = actress
+        movie.actor = ",".join(actress)
         movie.actress_pics = actress_pics
         movie.genre = genre
         movie.genre_id = genre_id

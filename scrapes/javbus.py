@@ -84,5 +84,6 @@ class JavBusScrape(BaseJavScrape):
         movie.genre = genre
         movie.genre_id = genre_id
         movie.actress = actress
+        movie.actor = ",".join(actress)
         movie.actress_pics = actress_pics
         return movie
