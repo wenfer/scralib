@@ -46,7 +46,6 @@ def handle_file(file_path: Path):
                 logging.exception(e)
 
 
-
 def is_directory_empty(directory):
     return len(os.listdir(directory)) == 0
 
