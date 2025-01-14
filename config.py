@@ -11,6 +11,9 @@ HTTPS_PROXY = ""
 # 音乐刮削目录
 MUSIC_TARGET_DIR = ""
 
+## 默认支持的文件后缀
+SUPPORT_SUFFIX = ['.mp4', '.mkv']
+
 IGNORE_NAMES = []
 SCRAPE_LIST = []
 
@@ -70,7 +73,3 @@ def update_settings(settings):
         IGNORE_NAMES = settings.get("ignoreNames").split(":")
     if settings.get("scrapeList"):
         SCRAPE_LIST = settings.get("scrapeList").split(":")
-
-
-
-
