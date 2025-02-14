@@ -1,18 +1,31 @@
+app = None
+
 DEFAULT_DIR_NAME = '整理完成'
 FAIL_DIR = '整理失败'
 SCAN_DIR = ""
-
+TMDB_API_KEY = "c06c581794e148e16461150d2320a13a"
 MOVIE_TARGET_DIR = ""
-
+DOWNLOAD_IMAGE = False  # 是否下载图片
 USE_PROXY = None
 HTTP_PROXY = ""
 HTTPS_PROXY = ""
 
-# 音乐刮削目录
-MUSIC_TARGET_DIR = ""
-
-## 默认支持的文件后缀
+# 默认支持的文件后缀
 SUPPORT_SUFFIX = ['.mp4', '.mkv']
+
+REMOVE_REGEX = [
+    "萝莉视频989pa.com-",
+    "阳光电影dygod.org",
+    "【.+】",
+    "梦幻天堂·龙网\\(www.321n.net\\)",
+    "[国|中|英][\u4e00-\u9fa5a]+[中|双|英|无]字",
+    "(mkv|mp4)",
+    "(19[0-9]{2}|20[0-9]{2})",
+    "(DTS-SONYHD|DDP5|BD|HD|DSNP|AAC|2Audio|DreamHD|Atmos)",
+    "((1080|2160)[p|P])",
+    "([H|X]26[4|5])",
+    "WEB-DL",
+]
 
 IGNORE_NAMES = []
 SCRAPE_LIST = []
@@ -53,7 +66,7 @@ def update_settings(settings):
     FAIL_DIR = settings.get("failDir", FAIL_DIR)
     SCAN_DIR = settings.get("scanDir", SCAN_DIR)
     MOVIE_TARGET_DIR = settings.get("movieTargetDir", MOVIE_TARGET_DIR)
-    MUSIC_TARGET_DIR = settings.get("musicTargetDir", MUSIC_TARGET_DIR)
+    # MUSIC_TARGET_DIR = settings.get("musicTargetDir", MUSIC_TARGET_DIR)
     USE_PROXY = settings.get("useProxy", USE_PROXY)
     HTTP_PROXY = settings.get("httpProxy", HTTP_PROXY)
     HTTPS_PROXY = settings.get("httpsProxy", HTTPS_PROXY)
