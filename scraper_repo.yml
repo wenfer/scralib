@@ -1,3 +1,0 @@
-name: Scraper Repo
-scrapers:
-  - scrapes/airav.py

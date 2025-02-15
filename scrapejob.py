@@ -6,6 +6,7 @@ from pathlib import Path
 
 import config
 import translate
+from config import GlobalConfig
 from scrapes.airav import AiravScrape
 from scrapes.arzon import ArzonScrape
 from scrapes.avsox import AvsoxScrape
@@ -14,7 +15,6 @@ from scrapes.dl_getchu import DlGetchuScrape
 from scrapes.fanza import FanzaScrape
 from scrapes.jav321 import Jav321Scrape
 from scrapes.javbus import JavBusScrape
-from scrapes.mp3_scrape import Mp3Scrape
 
 
 def match_ignores(string, patterns):
@@ -51,11 +51,11 @@ def is_directory_empty(directory):
 
 
 def scan_dir(directory_path):
-    if match_ignores(directory_path.name, config.IGNORE_NAMES):
+    if match_ignores(directory_path.name, GlobalConfig.get("ignoreNames")):
         return
     logging.info(f"开始扫描目录{directory_path.name}")
     for child in os.scandir(directory_path):
-        if match_ignores(child.name, config.IGNORE_NAMES):
+        if match_ignores(child.name, GlobalConfig.get("ignoreNames")):
             logging.info(f"ignore:{child.name}")
             continue
         if child.is_file():
@@ -71,58 +71,51 @@ def read_config_env():
     scandir = env.get("SCRALIB_SCAN_DIR")
     if scandir is None or scandir == "":
         raise RuntimeError("未配置扫描目录")
-    config.SCAN_DIR = scandir
-    config.IGNORE_NAMES = env.get("SCRALIB_IGNORE", "").split(":")
-    config.MOVIE_TARGET_DIR = env.get("SCRALIB_MOVIE_TARGET_DIR")
-    config.MUSIC_TARGET_DIR = env.get("SCRALIB_MOUSIC_TARGET_DIR")
-
-    if config.MOVIE_TARGET_DIR is None or config.MUSIC_TARGET_DIR is None:
-        config.IGNORE_NAMES.append(config.DEFAULT_DIR_NAME)
-    config.IGNORE_NAMES.append(config.FAIL_DIR)
-    config.MOVIE_MINSIZE = int(env.get("SCRALIB_MOVIE_MINSIZE", 10)) * 1024
-    config.MUSIC_MINSIZE = int(env.get("SCRALIB_MUSIC_MINSIZE", 1)) * 1024
-    config.TRANSLATE_ENGINE = env.get("SCRALIB_TRANSLATE_ENGINE", "google")
-    config.BING_APP_ID = env.get("SCRALIB_BING_API_ID")
-    config.BING_API_KEY = env.get("SCRALIB_BING_API_KEY")
-    config.OPENAI_API_URL = env.get("SCRALIB_OPENAI_API_URL")
-    config.OPENAI_API_KEY = env.get("SCRALIB_OPENAI_API_KEY")
-    config.OPENAI_MODEL = env.get("SCRALIB_OPENAI_MODEL")
-    config.CLAUDE_API_KEY = env.get("SCRALIB_CLAUDE_API_KEY")
-    config.BAIDU_APP_ID = env.get("SCRALIB_BAIDU_APP_ID")
-    config.BAIDU_API_KEY = env.get("SCRALIB_BAIDU_API_KEY")
-
-    config.SCRAPE_LIST = env.get("SCRALIB_SCRAPE_LIST", "").split(":")
-
-    config.USE_PROXY = env.get("SCRALIB_USE_PROXY")
-    config.HTTP_PROXY = env.get("SCRALIB_HTTP_PROXY")
-    config.HTTPS_PROXY = env.get("SCRALIB_HTTPS_PROXY")
+    GlobalConfig.set("scanDir", scandir)
+    GlobalConfig.set("targetDir", env.get("SCRALIB_TARGET_DIR", config.DEFAULT_DIR_NAME))
+    ignore_names = env.get("SCRALIB_IGNORE", "").split(":")
+    ignore_names.append(config.DEFAULT_DIR_NAME)
+    ignore_names.append(config.FAIL_DIR)
+    GlobalConfig.set("ignoreNames", ignore_names)
+    GlobalConfig.set("minsize", int(env.get("SCRALIB_MOVIE_MINSIZE", 10)) * 1024)
+    GlobalConfig.set("translateEngine", env.get("SCRALIB_TRANSLATE_ENGINE", "google"))
+    GlobalConfig.set("bingApiId", env.get("SCRALIB_BING_API_ID"))
+    GlobalConfig.set("bingApiKey", env.get("SCRALIB_BING_API_KEY"))
+    GlobalConfig.set("openaiApiUrl", env.get("SCRALIB_OPENAI_API_URL"))
+    GlobalConfig.set("openaiApiKey", env.get("SCRALIB_OPENAI_API_KEY"))
+    GlobalConfig.set("openaiApiModel", env.get("SCRALIB_OPENAI_MODEL"))
+    GlobalConfig.set("claudeApiKey", env.get("SCRALIB_CLAUDE_API_KEY"))
+    GlobalConfig.set("baiduAppId", env.get("SCRALIB_BAIDU_APP_ID"))
+    GlobalConfig.set("baiduApiKey", env.get("SCRALIB_BAIDU_API_KEY"))
+    GlobalConfig.set("scrapeList", env.get("SCRALIB_SCRAPE_LIST", "").split(":"))
+    GlobalConfig.set("useProxy", env.get("SCRALIB_USE_PROXY"))
+    GlobalConfig.set("httpProxy", env.get("SCRALIB_HTTP_PROXY"))
+    GlobalConfig.set("httpsProxy", env.get("SCRALIB_HTTPS_PROXY"))
 
 
 if __name__ == '__main__':
     read_config_env()
-    logging.basicConfig(level=logging.INFO)
     scrapes = []
     translator = translate.get_translate()
-    for scrape_name in config.SCRAPE_LIST:
-        if scrape_name == "mp3":
-            scrapes.append(Mp3Scrape(config.MOVIE_TARGET_DIR))
-        elif scrape_name == "javbus":
-            scrapes.append(JavBusScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+    target_dir = GlobalConfig.get("targetDir")
+    for scrape_name in GlobalConfig.get("scrapeList"):
+        if scrape_name == "javbus":
+            scrapes.append(JavBusScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "jav321":
-            scrapes.append(Jav321Scrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(Jav321Scrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "airav":
-            scrapes.append(AiravScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(AiravScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "arzon":
-            scrapes.append(ArzonScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(ArzonScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "avsox":
-            scrapes.append(AvsoxScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(AvsoxScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "avwiki":
-            scrapes.append(AvwikiScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(AvwikiScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "dl_getchu":
-            scrapes.append(DlGetchuScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
+            scrapes.append(DlGetchuScrape(target_dir=target_dir, translator=translator))
         elif scrape_name == "fanza":
-            scrapes.append(FanzaScrape(target_dir=config.MOVIE_TARGET_DIR, translator=translator))
-    for file in os.scandir(config.SCAN_DIR):
+            scrapes.append(FanzaScrape(target_dir=target_dir, translator=translator))
+    for file in os.scandir(GlobalConfig.get("scanDir")):
         if file.is_file():
             handle_file(Path(file.path))
         elif file.is_dir():

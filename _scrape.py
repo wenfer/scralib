@@ -16,7 +16,7 @@ import config
 
 
 def default_dir():
-    return os.path.join(config.SCAN_DIR, config.DEFAULT_DIR_NAME)
+    return os.path.join(config.GlobalConfig.get("scanDir"), config.DEFAULT_DIR_NAME)
 
 
 class NfoMovie:
@@ -206,8 +206,8 @@ class Scrape:
             cookies = {}
         if timeout is None:
             timeout = self.timeout
-        if config.USE_PROXY == "true":
-            proxies = {"http": config.HTTP_PROXY, "https": config.HTTPS_PROXY}
+        if config.GlobalConfig.get("useProxy") == "true":
+            proxies = {"http": config.GlobalConfig.get("httpProxy"), "https": config.GlobalConfig.get("httpsProxy")}
         else:
             proxies = None
         logging.info(f"proxies is {json.dumps(proxies)}")
@@ -225,8 +225,8 @@ class Scrape:
         if timeout is None:
             timeout = self.timeout
         try:
-            if config.USE_PROXY == "true":
-                proxies = {"http": config.HTTP_PROXY, "https": config.HTTPS_PROXY}
+            if config.GlobalConfig.get("useProxy") == "true":
+                proxies = {"http": config.GlobalConfig.get("httpProxy"), "https": config.GlobalConfig.get("httpsProxy")}
             else:
                 proxies = None
             r = requests.post(url, data=data,
@@ -285,7 +285,7 @@ class MovieScrape(Scrape):
         return self.SUPPORT_SUFFIX
 
     def min_size(self) -> int:
-        return config.MOVIE_MINSIZE
+        return config.GlobalConfig.get("minsize")
 
     def __create_nfo(self, movie: MovieInfo, save_dir) -> None:
         """创建nfo文件"""
@@ -323,13 +323,3 @@ class MovieScrape(Scrape):
     def save_img(self, movie: MovieInfo, save_dir):
         pass
 
-
-class MusicScrape(Scrape):
-    def __init__(self, timeout):
-        super().__init__(timeout)
-
-    def min_size(self) -> int:
-        return config.MUSIC_MINSIZE
-
-    def support_suffix(self) -> list:
-        return [".mp3"]

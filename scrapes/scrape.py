@@ -1,7 +1,5 @@
 from typing import Dict, Optional
 
-from models.movie import Movie
-
 
 class Scraper:
     pass
